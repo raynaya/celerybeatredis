@@ -5,6 +5,8 @@
 # File:
 # Description:
 from datetime import datetime
+from celery.schedules import crontab
+
 
 try:
     import simplejson as json
@@ -48,5 +50,11 @@ class DateTimeEncoder(json.JSONEncoder):
                 'second': obj.second,
                 'microsecond': obj.microsecond,
             }
+
+        elif isinstance(obj, bytes):
+            return obj.decode()
+        elif isinstance(obj, set):
+            return list(obj)
         else:
+            # print(str(obj)+' is type of '+ type(obj).__name__)
             return json.JSONEncoder.default(self, obj)

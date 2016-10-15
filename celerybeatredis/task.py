@@ -154,6 +154,7 @@ class PeriodicTask(object):
     def jsondump(self):
         # must do a deepcopy using our custom iterator to choose what to save (matching external view)
         self_dict = deepcopy({k: v for k, v in iter(self) if v is not None})
+        print(self_dict)
         return json.dumps(self_dict, cls=DateTimeEncoder)
 
     def update(self, other):
@@ -185,6 +186,10 @@ class PeriodicTask(object):
         :return:
         """
         return vars(self.data)
+        # if(self.data==None):
+        #     return []
+        # else:
+        #     return vars(self.data)
 
     def set_schedule(self, schedule):
         """
@@ -196,8 +201,10 @@ class PeriodicTask(object):
         elif isinstance(schedule, Interval) or isinstance(schedule, Crontab):
             self.data = schedule
         elif isinstance(schedule, celery.schedules.crontab):
+            print("instance of crontab " + str(schedule))
             self.data = Crontab(schedule.minute, schedule.hour,
                                 schedule.day_of_week, schedule.day_of_month, schedule.month_of_year)
+            # print(str(self.data))
         elif isinstance(schedule, celery.schedules.schedule)\
                 or isinstance(schedule, datetime.timedelta):
             self.data = Interval(schedule.seconds)
@@ -205,7 +212,11 @@ class PeriodicTask(object):
             schedule_inst = None
             for s in [Interval, Crontab]:
                 try:
+                    # print({s})
+                    print (schedule)
                     schedule_inst = s(**schedule)
+                    # print({s})
+                    print (schedule_inst)
                 except TypeError as typexc:
                     logger.warn("Create schedule failed. {}".format(schedule.__class__))
                     pass
@@ -224,7 +235,9 @@ class PeriodicTask(object):
         => rdb is hidden
         :return:
         """
-        for k, v in vars(self).iteritems():
+        for k, v in vars(self).items():
+            # print(k)
+            # print(v)
             if k == 'data':
                 yield 'schedule', self.schedule
             else:  # we can expose everything else
