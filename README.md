@@ -134,7 +134,39 @@ scheduler and should not be externally manipulated.
 The example from Celery User Guide::Periodic Tasks.
 (see: http://docs.celeryproject.org/en/latest/userguide/periodic-tasks.html#crontab-schedules)
 
+Similarly a crontab schedule becomes like this  - 
 
+```python
+CELERYBEAT_SCHEDULE = {
+    # Executes every Monday morning at 7:30 A.M
+    'add-every-monday-morning': {
+        'task': 'tasks.add',
+        'schedule': crontab(hour=7, minute=30, day_of_week=1),
+        'args': (16, 16),
+    },
+}
+```
+
+Becomes:
+
+```json
+{
+    "name" : "add-every-monday-morning",
+    "task" : "tasks.add",
+    "enabled" : true,
+    "schedule" : {
+        "minute" : "30",
+        "hour" : "7",
+        "day_of_week" : "1",
+        "day_of_month" : "*",
+        "month_of_year" : "*"
+    },
+    "args" : [
+        "16",
+        "16"
+    ]
+}
+```
 # Deploy multiple nodes
 
 Original celery beat doesn't support multiple node deployment, multiple beat
