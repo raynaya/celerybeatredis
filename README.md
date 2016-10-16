@@ -120,10 +120,11 @@ Becomes the following::
     ]
 }
 ```
+The following command should add a task in redis. Any task in celeryconfig is also added to the redis db if already not present.
 
+```
 set tasks:meta:multiply-every-10-minutes "{\"name\":\"multiply-every-10-minutes\",\"task\":\"tasks.multiply\",\"enabled\":true,\"schedule\": { \"period\": \"minutes\", \"every\": 10 },\"args\":[\"3\",\"2\"] }"
-
-The above command should set a task in redis. Any task in celeryconfig is also added to the redis db.
+```
 
 The following fields are required: name, task, crontab || interval,
 enabled when defining new tasks.
