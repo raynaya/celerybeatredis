@@ -85,41 +85,13 @@ It's perfect for quick test
 
 ## Manaully add to Redis
 
-You can create task by insert specify data to redis, according to following described:
+You can create task by insert specify data to redis like the following:
+
+
 
 Schedules can be manipulated in the Redis database through
 direct database manipulation. There exist two types of schedules,
-interval and crontab.
-
-```json
-{
-    "name" : "interval test schedule",
-    "task" : "task-name-goes-here",
-    "enabled" : true,
-    "interval" : {
-        "every" : 5,
-        "period" : "minutes"
-    },
-    "args" : [
-        "param1",
-        "param2"
-    ],
-    "kwargs" : {
-        "max_targets" : 100
-    },
-    "total_run_count" : 5,
-    "last_run_at" : {
-        "__type__": "datetime",
-        "year": 2014,
-        "month": 8,
-        "day": 30,
-        "hour": 8,
-        "minute": 10,
-        "second": 6,
-        "microsecond": 667
-    }
-}
-```
+interval and crontab(not working currently).
 
 The example from Celery User Guide::Periodic Tasks.
 ```python
@@ -138,30 +110,20 @@ Becomes the following::
     "name" : "interval test schedule",
     "task" : "task.add",
     "enabled" : true,
-    "interval" : {
+    "schedule" : {
         "every" : 30,
         "period" : "seconds",
     },
     "args" : [
         "param1",
         "param2"
-    ],
-    "kwargs" : {
-        "max_targets" : 100
-    },
-    "total_run_count": 5,
-    "last_run_at" : {
-        "__type__": "datetime",
-        "year": 2014,
-        "month": 8,
-        "day": 30,
-        "hour": 8,
-        "minute": 10,
-        "second": 6,
-        "microsecond": 667
-    }
+    ]
 }
 ```
+
+set tasks:meta:multiply-every-10-minutes "{\"name\":\"multiply-every-10-minutes\",\"task\":\"tasks.multiply\",\"enabled\":true,\"schedule\": { \"period\": \"minutes\", \"every\": 10 },\"args\":[\"3\",\"2\"] }"
+
+The above command should set a task in redis. Any task in celeryconfig is also added to the redis db.
 
 The following fields are required: name, task, crontab || interval,
 enabled when defining new tasks.
@@ -171,49 +133,6 @@ scheduler and should not be externally manipulated.
 The example from Celery User Guide::Periodic Tasks.
 (see: http://docs.celeryproject.org/en/latest/userguide/periodic-tasks.html#crontab-schedules)
 
-```python
-CELERYBEAT_SCHEDULE = {
-    # Executes every Monday morning at 7:30 A.M
-    'add-every-monday-morning': {
-        'task': 'tasks.add',
-        'schedule': crontab(hour=7, minute=30, day_of_week=1),
-        'args': (16, 16),
-    },
-}
-```
-
-Becomes:
-
-```json
-{
-    "name" : "add-every-monday-morning",
-    "task" : "tasks.add",
-    "enabled" : true,
-    "crontab" : {
-        "minute" : "30",
-        "hour" : "7",
-        "day_of_week" : "1",
-        "day_of_month" : "*",
-        "month_of_year" : "*"
-    },
-    "args" : [
-        "16",
-        "16"
-    ],
-    "kwargs" : {},
-    "total_run_count" : 1,
-    "last_run_at" : {
-        "__type__": "datetime",
-        "year": 2014,
-        "month": 8,
-        "day": 30,
-        "hour": 8,
-        "minute": 10,
-        "second": 6,
-        "microsecond": 667
-    }
-}
-```
 
 # Deploy multiple nodes
 
