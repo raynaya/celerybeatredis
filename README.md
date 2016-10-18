@@ -17,12 +17,7 @@ information in a backend Redis database.
 
 # Installation
 
-It can be installed by
-installing the celerybeat-redis Python egg:
-
-    # pip install celerybeat-redis
-
-And specifying the scheduler when running Celery Beat, e.g.
+Set your python path with the source and specify the scheduler when running Celery Beat, e.g.
 
     $ celery beat -S celerybeatredis.schedulers.RedisScheduler
 
@@ -58,7 +53,7 @@ instead.
 
 After installed and configure the needs by above, you can make a try with test, cd to test directory, start a worker by:
 
-    $ celery worker -A tasks -l info
+    $ celery worker -A tasks -l info --autoscale=10,3
 
 then start the beat by:
 
@@ -78,11 +73,7 @@ them as a celerybeat-redis task.
 
 It's perfect for quick test
 
-## Manaully add to Redis
-
-You can create task by insert specify data to redis like the following:
-
-
+## Add to Redis
 
 Schedules can be manipulated in the Redis database through
 direct database manipulation. There exist two types of schedules,
@@ -115,7 +106,7 @@ Becomes the following::
     ]
 }
 ```
-The following command should add a task in redis. Any task in celeryconfig is also added to the redis db if already not present.
+The following command should add an interval task in redis. 
 
 ```
 set tasks:meta:multiply-every-10-minutes "{\"name\":\"multiply-every-10-minutes\",\"task\":\"tasks.multiply\",\"enabled\":true,\"schedule\": { \"period\": \"minutes\", \"every\": 10 },\"args\":[\"3\",\"2\"] }"
@@ -129,7 +120,7 @@ scheduler and should not be externally manipulated.
 The example from Celery User Guide::Periodic Tasks.
 (see: http://docs.celeryproject.org/en/latest/userguide/periodic-tasks.html#crontab-schedules)
 
-Similarly a crontab schedule becomes like this  - 
+Similarly a crontab schedule like this  - 
 
 ```python
 CELERYBEAT_SCHEDULE = {
@@ -168,6 +159,8 @@ The following command will add cron tasks like the one above -
 ```
 set tasks:meta:multiply-every-20-minutes "{\"name\":\"cron-multiply-every-20-minutes\",\"task\":\"tasks.multiply\",\"enabled\":true,\"schedule\": { \"minute\": \"*/20\", \"hour\":\"*\", \"day_of_week\":\"*\", \"day_of_month\":\"*\", \"month_of_year\":\"*\" },\"args\":[\"13\",\"13\"] }"
 ```
+
+# Also add one time tasks from python
 
 You can add one time tasks on the fly as usual from the code like the following - 
 ```python
