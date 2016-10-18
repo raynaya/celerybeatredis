@@ -1,10 +1,5 @@
-# Project Status
 
-Because of the busy of work, I doesn't got much time on this time, and one major reason is now I am programming with Java...
-So I won't push any new release from now on, if someone is interest with it, just fork and maintenance your own version,
-Sorry for the inconvenient.
-
-# celerybeat-redis
+# celerybeat-redis (python 3.4 supported)
 
 It's modified from celerybeat-mongo (https://github.com/zakird/celerybeat-mongo)
 
@@ -18,7 +13,7 @@ information in a backend Redis database.
 
 1. Full-featured celery-beat scheduler
 2. Dynamically add/remove/modify tasks
-3. Support multiple instance by Active-Standby model
+3. Support multiple instance by Active-Standby model ( not tested)
 
 # Installation
 
@@ -167,7 +162,26 @@ Becomes:
     ]
 }
 ```
-# Deploy multiple nodes
+
+The following command will add cron tasks like the one above - 
+
+```
+set tasks:meta:multiply-every-20-minutes "{\"name\":\"cron-multiply-every-20-minutes\",\"task\":\"tasks.multiply\",\"enabled\":true,\"schedule\": { \"minute\": \"*/20\", \"hour\":\"*\", \"day_of_week\":\"*\", \"day_of_month\":\"*\", \"month_of_year\":\"*\" },\"args\":[\"13\",\"13\"] }"
+```
+
+You can add one time tasks on the fly as usual from the code like the following - 
+```python
+>>> from tasks import multiply
+>>> result = multiply.delay(12312,123)
+>>> result.state
+'PENDING'
+>>> result.state
+'SUCCESS'
+>>> result.get()
+1514376
+```
+
+# Deploy multiple nodes ( not tested)
 
 Original celery beat doesn't support multiple node deployment, multiple beat
 will send multiple tasks and make worker duplicate execution, celerybeat-redis
