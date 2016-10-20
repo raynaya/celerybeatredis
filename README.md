@@ -17,7 +17,11 @@ information in a backend Redis database.
 
 # Installation
 
-Set your python path with the source and specify the scheduler when running Celery Beat, e.g.
+Set your python path with the source or you can just install in editable mode using 
+
+    pip install -e . 
+
+and specify the scheduler when running Celery Beat, e.g.
 
     $ celery beat -S celerybeatredis.schedulers.RedisScheduler
 
