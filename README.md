@@ -79,9 +79,8 @@ It's perfect for quick test
 
 ## Add to Redis
 
-Schedules can be manipulated in the Redis database through
-direct database manipulation. There exist two types of schedules,
-interval and crontab(not working currently).
+Schedules can be manipulated in the Redis database from any redis-cli. There exist two types of schedules,
+interval and crontab.
 
 The example from Celery User Guide::Periodic Tasks.
 ```python
@@ -110,7 +109,7 @@ Becomes the following::
     ]
 }
 ```
-The following command should add an interval task in redis. 
+The following command should add an interval task in redis. Please note that the key has to have  prefix 'tasks:meta:'
 
 ```
 set tasks:meta:multiply-every-10-minutes "{\"name\":\"multiply-every-10-minutes\",\"task\":\"tasks.multiply\",\"enabled\":true,\"schedule\": { \"period\": \"minutes\", \"every\": 10 },\"args\":[3,2] }"
@@ -161,7 +160,7 @@ Becomes:
 The following command will add cron tasks like the one above - 
 
 ```
-set tasks:meta:multiply-every-20-minutes "{\"name\":\"cron-multiply-every-20-minutes\",\"task\":\"tasks.multiply\",\"enabled\":true,\"schedule\": { \"minute\": \"*/20\", \"hour\":\"*\", \"day_of_week\":\"*\", \"day_of_month\":\"*\", \"month_of_year\":\"*\" },\"args\":[13,13] }"
+set tasks:meta:multiply-every-20-minutes "{\"name\":\"multiply-every-20-minutes\",\"task\":\"tasks.multiply\",\"enabled\":true,\"schedule\": { \"minute\": \"*/20\", \"hour\":\"*\", \"day_of_week\":\"*\", \"day_of_month\":\"*\", \"month_of_year\":\"*\" },\"args\":[13,13] }"
 ```
 
 # Also add one time tasks from python
