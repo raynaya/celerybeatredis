@@ -257,8 +257,18 @@ class RedisScheduler(Scheduler):
         self.update_from_dict(self.app.conf.CELERYBEAT_SCHEDULE)
         for name in self.app.conf.CELERYBEAT_SCHEDULE:
             if not self.rdb.get("tasks:meta:"+name):
-                print('Adding task : '+"tasks:meta:"+name)
+                print('Adding new task : '+"tasks:meta:"+name)
                 self.rdb.set("tasks:meta:"+name, self.schedule[name].jsondump())
+            else:
+                #if the schdule is already present compare it for changes in schdule
+                original_schedule_obj=json.loads(self.rdb.get("tasks:meta:"+name))
+                new_schedule_obj=self.schedule[name]
+                #compare the schedules inside the two
+                if original_schedule_obj != new_schedule_obj:
+                    print('Adding Modified Task: tasks:meta:{}'.format(name))
+                    self.rdb.set("tasks:meta:"+name, self.schedule[name].jsondump())
+
+
 
     def tick(self):
         """Run a tick, that is one iteration of the scheduler.
