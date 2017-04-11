@@ -261,7 +261,7 @@ class RedisScheduler(Scheduler):
                 self.rdb.set("tasks:meta:"+name, self.schedule[name].jsondump())
             else:
                 #if the schdule is already present compare it for changes in schdule
-                original_schedule_obj=self.rdb.get("tasks:meta:"+name)['schedule']
+                original_schedule_obj=(json.loads(self.rdb.get("tasks:meta:"+name).decode('utf-8')))['schedule']
                 new_schedule_obj=self.schedule[name]['schedule']
                 #compare the schedules inside the two
                 if original_schedule_obj != new_schedule_obj:
